@@ -1,13 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .models import Product,Category
-from .serializers import ProductSerializer
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+#Models :
+from .models import Product,Category, Cart
+#Seializers :
+from .serializers import ProductSerializer, CartSerializer
+
 from rest_framework.response import Response
 from rest_framework import generics
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
 
 @api_view(['GET'])
 def products(request):
@@ -32,3 +33,18 @@ class CategoryProducts(generics.ListAPIView):
         category = Category.objects.filter(name__iexact = category_name).first()
 
         return qs.filter(category = category)
+
+class CartCreate(generics.CreateAPIView):
+
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    authentication_classes = [
+        TokenAuthentication,
+        SessionAuthentication
+    ]
+
+    def perform_create(self,serializer):
+        product_token = self.request.data.get('product_token')
+        product = Product.objects.filter(token = product_token).first()
+        user = self.request.user
+        serializer.save(user =user,product=product)

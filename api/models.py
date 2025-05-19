@@ -4,10 +4,8 @@ from django.contrib.auth.models import User
 import string ,random
 
 def code_generator(type = 'P' , length = 7):  # Default for products
-
         code = type + '-'+''.join(random.choices(string.digits, k = length))
         return code
-
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -39,11 +37,11 @@ class Product(models.Model):
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    num = models.IntegerField(default=1)
+    quantity = models.IntegerField(default=1)
     ordered = models.BooleanField(default=False)
 
     def __str__(self):
-        return (f"{self.num} of {self.product.name} for {self.user.username} ")
+        return (f"{self.quantity} of {self.product.name} for {self.user.username} ")
 
 
 class Order(models.Model):
