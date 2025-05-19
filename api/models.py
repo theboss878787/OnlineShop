@@ -60,7 +60,7 @@ class Order(models.Model):
     city = models.TextField()
     price = models.FloatField()
     date = models.DateTimeField(default=datetime.now)
-    token= models.CharField( blank= True,max_length=10,unique =True  )
+    token= models.CharField(blank= True,max_length=10,unique =True)
 
     def save(self, *args, **kwargs):
         if not self.token:
