@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from .models import Product, Cart
+#Models :
+from .models import Product, Cart, Category
+
 from Online_shop.serializers import PublicCategorySerializer
 
 class ProductSerializer(serializers.ModelSerializer):
     category = PublicCategorySerializer()
     class Meta:
-
         model = Product
         fields = "__all__"
 
@@ -14,7 +15,6 @@ class CartSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         cart = Cart.objects.filter(**validated_data, ordered = False).first()
         if cart:
-            print('exists')
             cart.quantity += 1
             cart.save()
             return cart
@@ -27,3 +27,8 @@ class CartSerializer(serializers.ModelSerializer):
             'product',
             'quantity',
         ]
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["name"]

@@ -1,12 +1,41 @@
 Get all products:  
 url : products/  
 Authentication : None  
-options : GET
+options : GET  
+Response example : {  
+{  
+"id":1,  
+"category":{"name":"Laptop"},  
+"name":"Asus",  
+"price":2000,  
+"condition":true,  
+"image":"/media/<image_name>",  
+"description":"...",  
+"extra_details":"...",  
+"token":"P-2645591"  
+} }
 
 Detail of one product:  
 url : products/<product_token>/  
 Authentication : None  
 options : GET  
+Response example :
+{  
+"id":1,  
+"category":{"name":"Laptop"},  
+"name":"Asus",  
+"price":2000,  
+"condition":true,  
+"image":"/media/<image_name>",  
+"description":"...",  
+"extra_details":"...",  
+"token":"P-2645591"  
+}
+
+List of all categories :  
+url : categories/  
+Authentication : None  
+Options : Get  
 
 Get products of one category:  
 url : categories/<category_name>/  

@@ -3,9 +3,9 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 #Models :
-from .models import Product,Category, Cart
+from .models import Product, Category, Cart
 #Seializers :
-from .serializers import ProductSerializer, CartSerializer
+from .serializers import ProductSerializer, CartSerializer, CategorySerializer
 
 from rest_framework.response import Response
 from rest_framework import generics
@@ -16,7 +16,10 @@ def products(request):
     product = Product.objects.all()
     serializer = ProductSerializer(product, many = True)
     return  Response(serializer.data)
+class Categories(generics.ListAPIView):
 
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 class ProductRetrieve(generics.RetrieveAPIView):
 
     queryset = Product.objects.all()
@@ -48,3 +51,4 @@ class CartCreate(generics.CreateAPIView):
         product = Product.objects.filter(token = product_token).first()
         user = self.request.user
         serializer.save(user =user,product=product)
+
