@@ -41,6 +41,7 @@ class OrderSerializer(serializers.ModelSerializer):
     cart = serializers.SerializerMethodField()
     date = serializers.DateTimeField(read_only=True)
     user = PublicUserSerializer(read_only = True)
+    price = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
         user = validated_data.get('user')
@@ -64,10 +65,12 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-                  'user',
-                  'address',
-                  'number',
-                  'city',
-                   'cart',
-                    'date'
+                'user',
+                'address',
+                'number',
+                'city',
+                'price',
+                'cart',
+                'date',
+
         ]
