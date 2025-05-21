@@ -9,6 +9,7 @@ urlpatterns = [
     path('categories/', views.Categories.as_view(), name = "categories"),
     path('categories/<str:category>/', views.CategoryProducts.as_view(), name='category_products'),
 
+    path('order/', views.Order.as_view(), name = "order"),
     path('token/', obtain_auth_token, name = 'get_token'),
     path('add_to_cart/',views.CartCreate.as_view(), name = 'add to cart')
 ]

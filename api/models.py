@@ -53,7 +53,7 @@ class Order(models.Model):
         ('Completed', 'Completed')
     )
     status = models.CharField(max_length=10, choices=status_choices, default='pending')
-    products = models.ManyToManyField(Cart)
+    cart = models.ManyToManyField(Cart)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.TextField()
     number = models.IntegerField()
