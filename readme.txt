@@ -74,38 +74,38 @@ Response example :
 [
     {
         "user": {
-            "username": "mohamadreza",
-            "email": ""
+            "username": "example",
+            "email": "example@gmail.com"
         },
-        "address": "ljkdjligdl",
-        "number": 6556455465,
-        "city": "tehran",
+        "address": "...",
+        "number": 9301234567,
+        "city": "...",
         "cart": [
             {
                 "product": {
-                    "name": "Airbuds",
-                    "token": "P-2645591"
+                    "name": "Laptop",
+                    "token": "P-4512354"
                 },
-                "quantity": 8
+                "quantity": 3
             }
         ],
         "date": "2025-05-20T07:39:39.261056Z"
     },
     {
         "user": {
-            "username": "mohamadreza",
-            "email": ""
+            "username": "example",
+            "email": "example.gmail.com"
         },
-        "address": "ljkdjligdl",
-        "number": 6556455465,
-        "city": "tehran",
+        "address": "...",
+        "number": 9301234567,
+        "city": "...",
         "cart": [
             {
                 "product": {
                     "name": "Airbuds",
                     "token": "P-2645591"
                 },
-                "quantity": 8
+                "quantity": 2
             }
         ],
         "date": "2025-05-20T07:40:15.739774Z"
