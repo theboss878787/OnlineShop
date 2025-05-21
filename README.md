@@ -107,6 +107,19 @@ python manage.py runserver
 
 ---
 
+### 🔐 Register
+- **URL**: `/register/`
+- **Method**: `POST`
+- **Authentication**: None
+
+#### 📨 Request Body:
+```json
+{
+  "username": "your_username",
+  "password": "your_password",
+  "email": "your_email"
+}
+```
 ### 🔐 Get Auth Token
 - **URL**: `/token/`
 - **Method**: `POST`

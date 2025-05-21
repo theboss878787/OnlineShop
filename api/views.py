@@ -2,10 +2,12 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+
 #Models :
 from .models import Product, Category, Cart, Order
+from django.contrib.auth.models import User
 #Seializers :
-from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer
+from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics
@@ -16,6 +18,11 @@ def products(request):
     product = Product.objects.all()
     serializer = ProductSerializer(product, many = True)
     return  Response(serializer.data)
+
+class Register(generics.CreateAPIView):
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 class Categories(generics.ListAPIView):
 
