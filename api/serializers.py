@@ -1,9 +1,33 @@
 from rest_framework import serializers
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
 #Models :
 from .models import Product, Cart, Category, Order
 from django.contrib.auth.models import User
 #PublicSerilalizers :
 from Online_shop.serializers import PublicCategorySerializer, PublicCartSerializer, PublicUserSerializer, PublicProductSerializer
+
+def send_order_email(to_email, items, price, token):
+    subject ="سفارش شما تایید شد"
+
+    html_content = render_to_string("emails/order_confirmation.html", {
+        "items": items,
+        "total_price": price,
+        "token": token,
+    })
+
+    text_content = strip_tags(html_content)
+
+    email = EmailMultiAlternatives(
+        subject,
+        text_content,
+        settings.EMAIL_HOST_USER,
+         [to_email]
+    )
+    email.attach_alternative(html_content, "text/html")
+    email.send()
 
 class ProductSerializer(serializers.ModelSerializer):
 
@@ -68,6 +92,8 @@ class OrderSerializer(serializers.ModelSerializer):
         user = validated_data.get('user')
         carts = Cart.objects.filter(user = user, ordered = False)
         if carts.first():
+
+
             order = Order.objects.create(**validated_data,price = 0)
             for cart in carts:
                 order.cart.add(cart)
@@ -76,6 +102,9 @@ class OrderSerializer(serializers.ModelSerializer):
                 order.price += cart_price
                 cart.save()
                 order.save()
+
+                send_order_email(items = carts, price=order.price, to_email=user.email, token=order.token[2:])
+
             return order
         raise serializers.ValidationError({"Message" : "Cart is empty"})
 

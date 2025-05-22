@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+{% load humanize custom_filters %}
+
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      padding: 20px;
+      direction: rtl;
+    }
+    .container {
+      max-width: 600px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #007BFF;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      text-align: right;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #777;
+    }
+    .total {
+      font-weight: bold;
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>مشتری عزیز،</h2>
+    <p>سفارش شما با کد پیگیری {{token}} موفقیت ثبت شد. جزئیات سفارش در جدول زیر آمده است:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>کالا</th>
+          <th>تعداد</th>
+          <th>قیمت واحد (تومان)</th>
+          <th>قیمت کل (تومان)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.product.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.product.price|intcomma }}</td>
+          <td>{{ item.product.price|mul:item.quantity|intcomma }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="total">
+          <td colspan="3">جمع کل سفارش</td>
+          <td>{{ total_price|intcomma }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>از خرید شما سپاسگزاریم 🙏</p>
+    <div class="footer">
+      تیم پشتیبانی فروشگاه<br>
+      این ایمیل به صورت خودکار ارسال شده است.
+    </div>
+  </div>
+</body>
+</html>
