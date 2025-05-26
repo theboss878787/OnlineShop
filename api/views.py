@@ -46,7 +46,17 @@ class CategoryProducts(generics.ListAPIView):
         category = Category.objects.filter(name__iexact = category_name).first()
 
         return qs.filter(category = category)
-
+class  CartList(generics.ListAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    authentication_classes = [
+        SessionAuthentication,
+        TokenAuthentication
+    ]
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(user = self.request.user, ordered = False)
+        return qs
 class CartCreate(generics.CreateAPIView):
 
     queryset = Cart.objects.all()

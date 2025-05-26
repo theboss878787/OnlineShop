@@ -87,13 +87,12 @@ class OrderSerializer(serializers.ModelSerializer):
     date = serializers.DateTimeField(read_only=True)
     user = PublicUserSerializer(read_only = True)
     price = serializers.IntegerField(read_only=True)
+    status = serializers.CharField(max_length=50,read_only=True)
 
     def create(self, validated_data):
         user = validated_data.get('user')
         carts = Cart.objects.filter(user = user, ordered = False)
         if carts.first():
-
-
             order = Order.objects.create(**validated_data,price = 0)
             for cart in carts:
                 order.cart.add(cart)
@@ -104,7 +103,6 @@ class OrderSerializer(serializers.ModelSerializer):
                 order.save()
 
                 send_order_email(items = carts, price=order.price, to_email=user.email, token=order.token[2:])
-
             return order
         raise serializers.ValidationError({"Message" : "Cart is empty"})
 
@@ -120,7 +118,9 @@ class OrderSerializer(serializers.ModelSerializer):
                 'number',
                 'city',
                 'price',
+                'status',
                 'cart',
                 'date',
 
         ]
+
