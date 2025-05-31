@@ -2,12 +2,11 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-
 #Models :
-from .models import Product, Category, Cart, Order
+from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
 #Seializers :
-from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer
+from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ProductReviewSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics
@@ -66,11 +65,12 @@ class CartCreate(generics.CreateAPIView):
         SessionAuthentication
     ]
 
+
     def perform_create(self,serializer):
         product_token = self.request.data.get('product_token')
         product = Product.objects.filter(token = product_token).first()
         user = self.request.user
-        serializer.save(user =user,product=product)
+        serializer.save(user =user, product=product)
 
 class Order(generics.ListCreateAPIView):
 
@@ -91,3 +91,14 @@ class Order(generics.ListCreateAPIView):
         qs = qs.filter(user = user)
         return qs
 
+
+class ProductReviewListCreate(generics.ListCreateAPIView):
+    queryset = ProductReview.objects.all()
+    serializer_class = ProductReviewSerializer
+
+    def perform_create(self, serializer):
+        product_token = self.request.data.get('product_token')
+        print(product_token)
+        product = Product.objects.filter(token = product_token).first()
+        user = self.request.user
+        serializer.save(user = user, product= product)

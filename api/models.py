@@ -32,7 +32,21 @@ class Product(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.name, self.category)
+class ProductReview(models.Model):
+    product = models.ForeignKey(Product, null=True,blank=True,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    review = models.TextField()
+    star_choices = [
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        (5, 5)
+    ]
+    star = models.IntegerField(choices=star_choices)
 
+    def __str__(self):
+        return f'{self.user} - {self.star} Stars'
 
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)

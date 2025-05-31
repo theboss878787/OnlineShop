@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 #Models :
-from .models import Product, Cart, Category, Order
+from .models import Product, Cart, Category, Order, ProductReview
 from django.contrib.auth.models import User
 #PublicSerilalizers :
 from Online_shop.serializers import PublicCategorySerializer, PublicCartSerializer, PublicUserSerializer, PublicProductSerializer
@@ -124,3 +124,20 @@ class OrderSerializer(serializers.ModelSerializer):
 
         ]
 
+class ProductReviewSerializer(serializers.ModelSerializer):
+
+    user = PublicUserSerializer(read_only=True)
+    product = PublicProductSerializer(read_only=True)
+    product_token = serializers.CharField(write_only=True)
+    class Meta:
+        model = ProductReview
+        fields = [
+            'user',
+            'product',
+            'review',
+            'star',
+            'product_token'
+        ]
+    def create(self ,validated_data):
+        validated_data.pop('product_token')
+        return super().create(validated_data)
