@@ -6,7 +6,7 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
 #Seializers :
-from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ProductReviewSerializer
+from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ReviewSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics
@@ -92,9 +92,9 @@ class Order(generics.ListCreateAPIView):
         return qs
 
 
-class ProductReviewListCreate(generics.ListCreateAPIView):
+class ReviewCreate(generics.CreateAPIView):
     queryset = ProductReview.objects.all()
-    serializer_class = ProductReviewSerializer
+    serializer_class = ReviewSerializer
 
     def perform_create(self, serializer):
         product_token = self.request.data.get('product_token')

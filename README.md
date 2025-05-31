@@ -59,6 +59,7 @@ python manage.py runserver
   "description": "...",
   "extra_details": "...",
   "token": "P-2645591"
+  
 }
 ```
 
@@ -217,6 +218,26 @@ Authorization: Token <user_token>
     "date": "2025-05-20T07:40:15.739774Z"
   }
 ]
+```
+
+---
+### ➕ Make review
+- **URL**: `/review/`
+- **Method**: `POST`
+- **Authentication**: Token / Session
+
+#### 📨 Request Body:
+```json
+{
+  "product_token" : "P-2645591",
+  "review" : "some text",
+  "star" : "1 to 5"
+}
+```
+
+#### 🧾 Headers:
+```http
+Authorization: Token <user_token>
 ```
 
 ---

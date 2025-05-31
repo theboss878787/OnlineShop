@@ -1,3 +1,5 @@
+from unicodedata import category
+
 from rest_framework import serializers
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -7,7 +9,7 @@ from django.conf import settings
 from .models import Product, Cart, Category, Order, ProductReview
 from django.contrib.auth.models import User
 #PublicSerilalizers :
-from Online_shop.serializers import PublicCategorySerializer, PublicCartSerializer, PublicUserSerializer, PublicProductSerializer
+from Online_shop.serializers import PublicCategorySerializer, PublicCartSerializer, PublicUserSerializer, PublicProductSerializer, PublicReviewSerializer
 
 def send_order_email(to_email, items, price, token):
     subject ="سفارش شما تایید شد"
@@ -32,9 +34,25 @@ def send_order_email(to_email, items, price, token):
 class ProductSerializer(serializers.ModelSerializer):
 
     category = PublicCategorySerializer()
+    reviews = serializers.SerializerMethodField(read_only=True)
+    def get_reviews(self, obj):
+        reviews = obj.reviews
+        return PublicReviewSerializer(reviews, many=True).data
     class Meta:
         model = Product
-        fields = "__all__"
+        fields = [
+            'token',
+            'name',
+            'price',
+            'discount',
+            'sale_price',
+            'in_stock',
+            'category',
+            'description',
+            'image',
+            'extra_details',
+            'reviews'
+        ]
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -124,7 +142,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
         ]
 
-class ProductReviewSerializer(serializers.ModelSerializer):
+class ReviewSerializer(serializers.ModelSerializer):
 
     user = PublicUserSerializer(read_only=True)
     product = PublicProductSerializer(read_only=True)

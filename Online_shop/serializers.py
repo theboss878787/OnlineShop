@@ -15,3 +15,8 @@ class PublicCartSerializer(serializers.Serializer):
 class PublicUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=100, read_only=True)
     email = serializers.CharField(max_length=100, read_only= True )
+
+class PublicReviewSerializer(serializers.Serializer):
+    user = PublicUserSerializer()
+    review = serializers.CharField(max_length=100)
+    star = serializers.IntegerField()
