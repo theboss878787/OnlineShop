@@ -51,15 +51,36 @@ python manage.py runserver
 #### ✅ Response:
 ```json
 {
-  "name": "Asus",
-  "price": 2000,
-  "category": {"name": "Laptop"},
-  "condition": true,
-  "image": "/media/<image_name>",
-  "description": "...",
-  "extra_details": "...",
-  "token": "P-2645591"
-  
+    "token": "P-5946767",
+    "name": "Asus Vivobook",
+    "price": 2000,
+    "discount": 30,
+    "sale_price": 1400.0,
+    "in_stock": 3,
+    "category": {
+        "name": "Laptop"
+    },
+    "description": "16gb ram",
+    "image": "http://127.0.0.1:8000/media/image.png",
+    "extra_details": "512  GB",
+    "reviews": [
+        {
+            "user": {
+                "username": "user1",
+                "email": "user1@gmail.com"
+            },
+            "review": "Excellent",
+            "star": 5
+        },
+        {
+            "user": {
+                "username": "user2",
+                "email": "user2@gmail.com"
+            },
+            "review": "Good",
+            "star": 2
+        }
+    ]
 }
 ```
 
@@ -73,14 +94,36 @@ python manage.py runserver
 #### ✅ Response:
 ```json
 {
-  "name": "Asus",
-  "price": 2000,
-  "category": {"name": "Laptop"},
-  "condition": true,
-  "image": "/media/<image_name>",
-  "description": "...",
-  "extra_details": "...",
-  "token": "P-2645591"
+    "token": "P-5946767",
+    "name": "Asus Vivobook",
+    "price": 2000,
+    "discount": 30,
+    "sale_price": 1400.0,
+    "in_stock": 3,
+    "category": {
+        "name": "Laptop"
+    },
+    "description": "16gb ram",
+    "image": "http://127.0.0.1:8000/media/image.png",
+    "extra_details": "512  GB",
+    "reviews": [
+        {
+            "user": {
+                "username": "user1",
+                "email": "user1@gmail.com"
+            },
+            "review": "Excellent",
+            "star": 5
+        },
+        {
+            "user": {
+                "username": "user2",
+                "email": "user2@gmail.com"
+            },
+            "review": "Good",
+            "star": 2
+        }
+    ]
 }
 ```
 

@@ -113,6 +113,12 @@ class OrderSerializer(serializers.ModelSerializer):
         if carts.first():
             order = Order.objects.create(**validated_data,price = 0)
             for cart in carts:
+
+                product = cart.product
+                if cart.quantity > product.in_stock :
+                    raise serializers.ValidationError({"Message": "Out of stock"})
+                product.in_stock -= cart.quantity
+                product.save()
                 order.cart.add(cart)
                 cart_price = cart.product.price * cart.quantity
                 cart.ordered = True

@@ -91,7 +91,6 @@ class Order(generics.ListCreateAPIView):
         qs = qs.filter(user = user)
         return qs
 
-
 class ReviewCreate(generics.CreateAPIView):
     queryset = ProductReview.objects.all()
     serializer_class = ReviewSerializer
