@@ -78,7 +78,7 @@ class CartCreate(generics.CreateAPIView):
         user = self.request.user
         serializer.save(user =user, product=product)
 
-class CartDelete(APIView):
+class CartDecrease(APIView):
 
     authentication_classes = [
         SessionAuthentication,
@@ -105,6 +105,23 @@ class CartDelete(APIView):
         else:
             cart.delete()
             return Response({'detail': 'Done!'}, status=status.HTTP_204_NO_CONTENT)
+class ClearCart(APIView):
+
+    authentication_classes = [
+        SessionAuthentication,
+        TokenAuthentication
+    ]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        carts = Cart.objects.filter(user=user, ordered = False)
+        if carts:
+            for cart in carts:
+                cart.delete()
+            return Response({'detail': 'Done!'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Cart is empty!'}, status=status.HTTP_204_NO_CONTENT)
+
 class UpdateQuantity(APIView):
 
     authentication_classes = [

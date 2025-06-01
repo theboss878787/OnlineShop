@@ -220,6 +220,17 @@ Authorization: Token <user_token>
 ```http
 Authorization: Token <user_token>
 ```
+
+---
+### 🗑️ Clear Cart 
+- **URL**: `/cart/clear/`
+- **Method**: `DELETE`
+- **Authentication**: Token / Session
+
+#### 🧾 Headers:
+```http
+Authorization: Token <user_token>
+```
 ---
 ### ➖ Update The Quantity Of An Item In The Cart
 - **URL**: `/cart/update/`
