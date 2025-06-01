@@ -19,9 +19,9 @@ urlpatterns = [
 
     path('review/', views.ReviewCreate.as_view(), name = 'review'),
 
-    path('add_to_cart/',views.CartCreate.as_view(), name = 'add_to_cart'),
-    path('delete_cart/', views.CartDelete.as_view(), name = 'cart_delete'),
-    path('carts/', views.CartList.as_view(), name = "cart_list"),
+    path('cart/add/',views.CartCreate.as_view(), name = 'add_to_cart'),
+    path('cart/decrease/', views.CartDelete.as_view(), name = 'decrease_quantity'),
+    path('cart/', views.CartList.as_view(), name = "cart_list"),
 
     path('auth/password_reset/', PasswordResetView.as_view(), name = "password_reset"),
     path('auth/password_reset_done/', PasswordResetDoneView.as_view(), name = 'password_reset_done'),

@@ -186,8 +186,8 @@ python manage.py runserver
 
 ---
 
-### ➕ Add Product to Cart
-- **URL**: `/add_to_cart/`
+### ➕ Add Product to Cart Or Increase Quantity
+- **URL**: `cart/add/`
 - **Method**: `POST`
 - **Authentication**: Token / Session
 
@@ -204,7 +204,24 @@ Authorization: Token <user_token>
 ```
 
 ---
+### ➖ Decrease the quantity of an item in the cart
+- **URL**: `/cart/decrease/`
+- **Method**: `DELETE`
+- **Authentication**: Token / Session
 
+#### 📨 Request Body:
+```json
+{
+  "product_token": "P-2645591"
+}
+```
+
+#### 🧾 Headers:
+```http
+Authorization: Token <user_token>
+```
+
+---
 ### 🧾 View and Submit Orders
 - **URL**: `/order/`
 - **Methods**: `GET`, `POST`
