@@ -35,9 +35,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
     category = PublicCategorySerializer()
     reviews = serializers.SerializerMethodField(read_only=True)
+
     def get_reviews(self, obj):
         reviews = obj.reviews
         return PublicReviewSerializer(reviews, many=True).data
+
     class Meta:
         model = Product
         fields = [
@@ -81,6 +83,8 @@ class CartSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         cart = Cart.objects.filter(**validated_data, ordered = False).first()
         if cart:
+            if cart.quantity >= cart.product.in_stock:
+                raise serializers.ValidationError({'Message ' : f"{cart.product.name} is out of stock"})
             cart.quantity += 1
             cart.save()
             return cart
@@ -111,18 +115,23 @@ class OrderSerializer(serializers.ModelSerializer):
         user = validated_data.get('user')
         carts = Cart.objects.filter(user = user, ordered = False)
         if carts.first():
-            order = Order.objects.create(**validated_data,price = 0)
             for cart in carts:
-
                 product = cart.product
                 if cart.quantity > product.in_stock :
-                    raise serializers.ValidationError({"Message": "Out of stock"})
+                    raise serializers.ValidationError({"Message": "Some products are out of stock"})
+
+            order = Order.objects.create(**validated_data,price = 0)
+
+            for cart in carts:
+                product = cart.product
                 product.in_stock -= cart.quantity
                 product.save()
+
                 order.cart.add(cart)
-                cart_price = cart.product.price * cart.quantity
-                cart.ordered = True
+                cart_price = cart.product.sale_price * cart.quantity
                 order.price += cart_price
+                cart.ordered = True
+
                 cart.save()
                 order.save()
 
