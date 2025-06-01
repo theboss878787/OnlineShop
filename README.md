@@ -220,7 +220,25 @@ Authorization: Token <user_token>
 ```http
 Authorization: Token <user_token>
 ```
+---
+### ➖ Update The Quantity Of An Item In The Cart
+- **URL**: `/cart/update/`
+- **Method**: `PATCH`
+- **Authentication**: Token / Session
 
+#### 📨 Request Body:
+```json
+{
+  "product_token": "P-2645591",
+  "quantity" : 3
+}
+```
+>❓ If item is not in the cart it will be added to cart with given quantity. 
+
+#### 🧾 Headers:
+```http
+Authorization: Token <user_token>
+```
 ---
 ### 🧾 View and Submit Orders
 - **URL**: `/order/`

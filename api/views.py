@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
 #Seializers :
-from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ReviewSerializer
+from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ReviewSerializer, PublicCartSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
@@ -105,6 +105,41 @@ class CartDelete(APIView):
         else:
             cart.delete()
             return Response({'detail': 'Done!'}, status=status.HTTP_204_NO_CONTENT)
+class UpdateQuantity(APIView):
+
+    authentication_classes = [
+        SessionAuthentication,
+        TokenAuthentication
+    ]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self,request):
+        serializer = PublicCartSerializer
+        user = request.user
+
+        product_token = request.data.get('product_token')
+        if not product_token:
+            return Response({'error': 'Send the product token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        quantity = request.data.get('quantity')
+        if not quantity:
+            return Response({'error': 'Send the quantity.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        product = Product.objects.filter(token = product_token).first()
+        if not product:
+            return Response({'error': 'Product not found!'}, status=status.HTTP_404_NOT_FOUND)
+        if quantity>product.in_stock :
+            return Response({'error': f'{product.name} Is out of stock.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        cart = Cart.objects.filter(user = user, product=product, ordered = False).first()
+        if not cart:
+            cart = Cart.objects.create(product= product, user = user, quantity=quantity, ordered = False)
+            return Response(serializer(cart).data)
+
+        cart.quantity = quantity
+        cart.save()
+        return Response(serializer(cart).data)
+
 
 class Order(generics.ListCreateAPIView):
 
