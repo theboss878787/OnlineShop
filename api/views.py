@@ -2,6 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from rest_framework.generics import DestroyAPIView
+from rest_framework.views import APIView
 #Models :
 from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
@@ -9,7 +11,7 @@ from django.contrib.auth.models import User
 from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ReviewSerializer
 
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework import generics, permissions, status
 
 @api_view(['GET'])
 def products(request):
@@ -65,12 +67,39 @@ class CartCreate(generics.CreateAPIView):
         SessionAuthentication
     ]
 
-
     def perform_create(self,serializer):
         product_token = self.request.data.get('product_token')
         product = Product.objects.filter(token = product_token).first()
         user = self.request.user
         serializer.save(user =user, product=product)
+
+class CartDelete(APIView):
+
+    authentication_classes = [
+        SessionAuthentication,
+        TokenAuthentication
+    ]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self,request):
+        user = request.user
+        product_token = request.data.get('product_token')
+        if not product_token:
+            return Response({'error': 'Send the product token.'}, status=status.HTTP_400_BAD_REQUEST)
+        product = Product.objects.filter(token = product_token).first()
+        if not product:
+            return Response({'error': 'Product not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+        cart = Cart.objects.filter(user = user, product=product, ordered = False).first()
+        if not cart :
+            return Response({'error': 'This Product is not in your cart.'}, status=status.HTTP_400_BAD_REQUEST)
+        if cart.quantity >1 :
+            cart.quantity -= 1
+            cart.save()
+            return Response({'detail': 'Done!'}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            cart.delete()
+            return Response({'detail': 'Done!'}, status=status.HTTP_204_NO_CONTENT)
 
 class Order(generics.ListCreateAPIView):
 
@@ -80,6 +109,7 @@ class Order(generics.ListCreateAPIView):
         SessionAuthentication,
         TokenAuthentication
     ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         user = self.request.user

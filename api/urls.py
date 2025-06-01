@@ -20,6 +20,7 @@ urlpatterns = [
     path('review/', views.ReviewCreate.as_view(), name = 'review'),
 
     path('add_to_cart/',views.CartCreate.as_view(), name = 'add_to_cart'),
+    path('delete_cart/', views.CartDelete.as_view(), name = 'cart_delete'),
     path('carts/', views.CartList.as_view(), name = "cart_list"),
 
     path('auth/password_reset/', PasswordResetView.as_view(), name = "password_reset"),
