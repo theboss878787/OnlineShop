@@ -50,10 +50,13 @@ class CategoryProducts(generics.ListAPIView):
 class  CartList(generics.ListAPIView):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
+
     authentication_classes = [
         SessionAuthentication,
         TokenAuthentication
     ]
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(user = self.request.user, ordered = False)
@@ -62,10 +65,12 @@ class CartCreate(generics.CreateAPIView):
 
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
+
     authentication_classes = [
-        TokenAuthentication,
-        SessionAuthentication
+        SessionAuthentication,
+        TokenAuthentication
     ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self,serializer):
         product_token = self.request.data.get('product_token')
@@ -124,6 +129,12 @@ class Order(generics.ListCreateAPIView):
 class ReviewCreate(generics.CreateAPIView):
     queryset = ProductReview.objects.all()
     serializer_class = ReviewSerializer
+
+    authentication_classes = [
+        SessionAuthentication,
+        TokenAuthentication
+    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         product_token = self.request.data.get('product_token')

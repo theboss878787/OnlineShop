@@ -165,7 +165,6 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     user = PublicUserSerializer(read_only=True)
     product = PublicProductSerializer(read_only=True)
-    product_token = serializers.CharField(write_only=True)
     class Meta:
         model = ProductReview
         fields = [
@@ -173,8 +172,4 @@ class ReviewSerializer(serializers.ModelSerializer):
             'product',
             'review',
             'star',
-            'product_token'
         ]
-    def create(self ,validated_data):
-        validated_data.pop('product_token')
-        return super().create(validated_data)
