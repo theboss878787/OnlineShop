@@ -25,6 +25,7 @@ urlpatterns = [
     path('cart/clear/', views.ClearCart.as_view(), name='clear_cart'),
     path('cart/', views.CartList.as_view(), name = "cart_list"),
 
+    path('auth_me/', views.AtuhMe.as_view(),name = 'auth'),
     path('auth/password_reset/', PasswordResetView.as_view(), name = "password_reset"),
     path('auth/password_reset_done/', PasswordResetDoneView.as_view(), name = 'password_reset_done'),
     path('auth/password_reset_confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view() ,name = 'password_reset_confirm'),

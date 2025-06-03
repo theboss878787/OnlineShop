@@ -1,5 +1,3 @@
-from unicodedata import category
-
 from rest_framework import serializers
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -35,6 +33,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     category = PublicCategorySerializer()
     reviews = serializers.SerializerMethodField(read_only=True)
+    sale_price = serializers.FloatField(read_only=True)
 
     def get_reviews(self, obj):
         reviews = obj.reviews
@@ -59,6 +58,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
+
     def create(self, validated_data):
 
         password = validated_data.pop('password')
@@ -72,8 +72,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'username',
+            'email',
             'password',
-            'email'
+            'first_name',
+            'last_name',
+
         ]
 
 class CartSerializer(serializers.ModelSerializer):

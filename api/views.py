@@ -4,9 +4,12 @@ from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.generics import DestroyAPIView
 from rest_framework.views import APIView
+
+from Online_shop.serializers import PublicUserSerializer
 #Models :
 from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 #Seializers :
 from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ReviewSerializer, PublicCartSerializer
 
@@ -19,6 +22,18 @@ def products(request):
     product = Product.objects.all()
     serializer = ProductSerializer(product, many = True)
     return  Response(serializer.data)
+
+class AtuhMe(APIView):
+    authentication_classes = [
+        SessionAuthentication,
+        TokenAuthentication
+    ]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self,request):
+        user = request.user
+        return Response(UserSerializer(user).data)
+
 
 class Register(generics.CreateAPIView):
 
@@ -47,7 +62,7 @@ class CategoryProducts(generics.ListAPIView):
         category = Category.objects.filter(name__iexact = category_name).first()
 
         return qs.filter(category = category)
-class  CartList(generics.ListAPIView):
+class CartList(generics.ListAPIView):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
 
