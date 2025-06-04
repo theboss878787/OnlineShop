@@ -10,6 +10,8 @@ urlpatterns = [
     path('products/<str:token>/',views.ProductRetrieve.as_view(),name = 'product_detail' ),
     path('search/', views.search_product, name = 'search'),
 
+    path('csrf/', views.csrf, name = 'csrf'),
+
     path('categories/', views.Categories.as_view(), name = "categories"),
     path('categories/<str:category>/', views.CategoryProducts.as_view(), name='category_products'),
 
@@ -26,6 +28,8 @@ urlpatterns = [
     path('cart/clear/', views.ClearCart.as_view(), name='clear_cart'),
     path('cart/', views.CartList.as_view(), name = "cart_list"),
 
+    path('login/', views.LoginView, name = 'login'),
+    path('logout/', views.LogoutView, name= 'logout'),
     path('auth_me/', views.AtuhMe.as_view(),name = 'auth'),
     path('auth/password_reset/', PasswordResetView.as_view(), name = "password_reset"),
     path('auth/password_reset_done/', PasswordResetDoneView.as_view(), name = 'password_reset_done'),

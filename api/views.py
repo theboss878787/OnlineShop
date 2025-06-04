@@ -1,4 +1,7 @@
 from django.db.models import Q
+from django.contrib.auth import authenticate, login, logout
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.views import APIView
@@ -11,6 +14,9 @@ from .serializers import ProductSerializer, CartSerializer, CategorySerializer, 
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
 
+
+def csrf(request):
+    return JsonResponse({'csrfToken': get_token(request)})
 @api_view(['GET'])
 def products(request):
 
@@ -35,7 +41,20 @@ class AtuhMe(APIView):
         user = request.user
         return Response(UserSerializer(user).data)
 
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return Response({"message": "Logged in successfully"})
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
+class LogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response({"message": "Logged out successfully"})
 class Register(generics.CreateAPIView):
 
     queryset = User.objects.all()
