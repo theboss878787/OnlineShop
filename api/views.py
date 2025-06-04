@@ -17,6 +17,7 @@ from rest_framework import generics, permissions, status
 
 def csrf(request):
     return JsonResponse({'csrfToken': get_token(request)})
+
 @api_view(['GET'])
 def products(request):
 

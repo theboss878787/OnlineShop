@@ -28,8 +28,8 @@ urlpatterns = [
     path('cart/clear/', views.ClearCart.as_view(), name='clear_cart'),
     path('cart/', views.CartList.as_view(), name = "cart_list"),
 
-    path('login/', views.LoginView, name = 'login'),
-    path('logout/', views.LogoutView, name= 'logout'),
+    path('login/', views.LoginView.as_view(), name = 'login'),
+    path('logout/', views.LogoutView.as_view(), name= 'logout'),
     path('auth_me/', views.AtuhMe.as_view(),name = 'auth'),
     path('auth/password_reset/', PasswordResetView.as_view(), name = "password_reset"),
     path('auth/password_reset_done/', PasswordResetDoneView.as_view(), name = 'password_reset_done'),
