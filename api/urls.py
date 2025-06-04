@@ -8,6 +8,7 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, 
 urlpatterns = [
     path('products/', views.products, name = 'products'),
     path('products/<str:token>/',views.ProductRetrieve.as_view(),name = 'product_detail' ),
+    path('search/', views.search_product, name = 'search'),
 
     path('categories/', views.Categories.as_view(), name = "categories"),
     path('categories/<str:category>/', views.CategoryProducts.as_view(), name='category_products'),

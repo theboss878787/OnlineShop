@@ -1,10 +1,10 @@
+from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.views import APIView
 #Models :
 from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
 #Seializers :
 from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ReviewSerializer, PublicCartSerializer
 
@@ -17,7 +17,13 @@ def products(request):
     product = Product.objects.all()
     serializer = ProductSerializer(product, many = True)
     return  Response(serializer.data)
+@api_view(["GET"])
+def search_product(request):
+    q = request.GET.get('q')
+    products = Product.objects.filter(Q(name__icontains = q)| Q (description__icontains = q))
+    serializer = ProductSerializer(products, many=True)
 
+    return Response(serializer.data)
 class AtuhMe(APIView):
     authentication_classes = [
         SessionAuthentication,
