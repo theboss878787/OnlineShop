@@ -3,7 +3,7 @@ from rest_framework import serializers
 class PublicProductSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100, read_only=True)
     sale_price = serializers.IntegerField(read_only=True)
-    token = serializers.CharField(max_length=50)
+    token = serializers.CharField(max_length=50, read_only=True)
 
 class PublicCategorySerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)

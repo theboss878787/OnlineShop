@@ -1,11 +1,6 @@
-from django.http import HttpResponse
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-from rest_framework.generics import DestroyAPIView
 from rest_framework.views import APIView
-
-from Online_shop.serializers import PublicUserSerializer
 #Models :
 from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
@@ -88,10 +83,8 @@ class CartCreate(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self,serializer):
-        product_token = self.request.data.get('product_token')
-        product = Product.objects.filter(token = product_token).first()
         user = self.request.user
-        serializer.save(user =user, product=product)
+        serializer.save(user =user)
 
 class CartDecrease(APIView):
 
@@ -204,8 +197,5 @@ class ReviewCreate(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        product_token = self.request.data.get('product_token')
-        print(product_token)
-        product = Product.objects.filter(token = product_token).first()
         user = self.request.user
-        serializer.save(user = user, product= product)
+        serializer.save(user = user)

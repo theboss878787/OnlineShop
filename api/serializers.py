@@ -3,6 +3,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+from drf_yasg.utils import swagger_serializer_method
+
 #Models :
 from .models import Product, Cart, Category, Order, ProductReview
 from django.contrib.auth.models import User
@@ -35,6 +37,7 @@ class ProductSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField(read_only=True)
     sale_price = serializers.FloatField(read_only=True)
 
+    @swagger_serializer_method(serializer_or_field=PublicReviewSerializer(many=True))
     def get_reviews(self, obj):
         reviews = obj.reviews
         return PublicReviewSerializer(reviews, many=True).data
@@ -82,10 +85,16 @@ class UserSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
 
     product = PublicProductSerializer(read_only=True)
+    product_token = serializers.CharField(max_length=100, write_only=True)
 
     def create(self, validated_data):
         cart = Cart.objects.filter(**validated_data, ordered = False).first()
-        product = validated_data.get('product')
+        token = validated_data.pop('product_token')
+        try:
+            product = Product.objects.get(token=token)
+        except Product.DoesNotExist:
+            raise serializers.ValidationError({'product_token': 'Invalid token'})
+
         if cart:
             if cart.quantity >= product.in_stock:
                 raise serializers.ValidationError({'Message ' : f"{cart.product.name} is out of stock"})
@@ -101,8 +110,9 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields =[
-            'product',
+            'product_token',
             'quantity',
+            'product'
         ]
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -113,7 +123,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
 
     cart = serializers.SerializerMethodField()
-    date = serializers.DateTimeField(read_only=True)
+    date = serializers.DateTimeField(required=False)
     user = PublicUserSerializer(read_only = True)
     price = serializers.IntegerField(read_only=True)
     status = serializers.CharField(max_length=50,read_only=True)
@@ -166,13 +176,21 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
 
-    user = PublicUserSerializer(read_only=True)
-    product = PublicProductSerializer(read_only=True)
+    product_token = serializers.CharField(max_length=100, write_only=True)
+    def create(self,validated_data):
+
+        token = validated_data.pop('product_token')
+        try:
+            product = Product.objects.get(token=token)
+        except Product.DoesNotExist:
+            raise serializers.ValidationError({'product_token': 'Invalid token'})
+
+        return ProductReview.objects.create(product=product, **validated_data)
+
     class Meta:
         model = ProductReview
         fields = [
-            'user',
-            'product',
             'review',
             'star',
+            'product_token'
         ]
