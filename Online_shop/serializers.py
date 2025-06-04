@@ -20,3 +20,5 @@ class PublicReviewSerializer(serializers.Serializer):
     user = PublicUserSerializer()
     review = serializers.CharField(max_length=100)
     star = serializers.IntegerField()
+class PublicTokenSerializer(serializers.Serializer):
+    key = serializers.CharField(read_only=True)

@@ -15,7 +15,7 @@ urlpatterns = [
     path('categories/', views.Categories.as_view(), name = "categories"),
     path('categories/<str:category>/', views.CategoryProducts.as_view(), name='category_products'),
 
-    path('token/', obtain_auth_token, name = 'get_token'),
+    path('token/', views.ObtainAuthToken.as_view(), name = 'get_token'),
     path('register/', views.Register.as_view(), name = 'register'),
 
     path('order/', views.Order.as_view(), name = "order"),

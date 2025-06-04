@@ -4,12 +4,13 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 from drf_yasg.utils import swagger_serializer_method
+from rest_framework.authtoken.models import Token
 
 #Models :
 from .models import Product, Cart, Category, Order, ProductReview
 from django.contrib.auth.models import User
 #PublicSerilalizers :
-from Online_shop.serializers import PublicCategorySerializer, PublicCartSerializer, PublicUserSerializer, PublicProductSerializer, PublicReviewSerializer
+from Online_shop.serializers import PublicTokenSerializer,PublicCategorySerializer, PublicCartSerializer, PublicUserSerializer, PublicProductSerializer, PublicReviewSerializer
 
 def send_order_email(to_email, items, price, token):
     subject ="سفارش شما تایید شد"
@@ -60,8 +61,12 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    token = serializers.SerializerMethodField(read_only=True)
 
-
+    @swagger_serializer_method(serializer_or_field=PublicTokenSerializer())
+    def get_token(self, obj):
+        token = Token.objects.create(user = obj)
+        return PublicTokenSerializer(token).data
     def create(self, validated_data):
 
         password = validated_data.pop('password')
@@ -74,6 +79,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'token',
             'username',
             'email',
             'password',
