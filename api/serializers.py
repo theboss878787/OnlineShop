@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework import serializers
-from rest_framework.reverse import reverse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -179,6 +178,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 'city',
                 'price',
                 'status',
+                'postal_code',
                 'cart',
                 'date',
 

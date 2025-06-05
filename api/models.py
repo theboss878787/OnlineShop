@@ -73,6 +73,7 @@ class Order(models.Model):
     )
     status = models.CharField(max_length=10, choices=status_choices, default='pending')
     cart = models.ManyToManyField(Cart)
+    postal_code = models.IntegerField(null=True, blank = True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.TextField()
     number = models.IntegerField()
