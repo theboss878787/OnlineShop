@@ -2,6 +2,7 @@ from rest_framework import parsers, renderers
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.compat import coreapi, coreschema
+from rest_framework.generics import ListAPIView
 from rest_framework.schemas import ManualSchema
 from rest_framework.schemas import coreapi as coreapi_schema
 
@@ -25,19 +26,22 @@ from rest_framework import generics, permissions, status
 def csrf(request):
     return JsonResponse({'csrfToken': get_token(request)})
 
-@api_view(['GET'])
-def products(request):
+class Products(generics.ListAPIView):
 
-    product = Product.objects.all()
-    serializer = ProductSerializer(product, many = True)
-    return  Response(serializer.data)
-@api_view(["GET"])
-def search_product(request):
-    q = request.GET.get('q')
-    products = Product.objects.filter(Q(name__icontains = q)| Q (description__icontains = q))
-    serializer = ProductSerializer(products, many=True)
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
-    return Response(serializer.data)
+
+class SearchProduct(generics.ListAPIView):
+
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+        qs = super().get_queryset()
+        qs = qs.filter(Q(name__icontains = q)| Q (description__icontains = q))
+        return qs
 class AtuhMe(APIView):
     authentication_classes = [
         SessionAuthentication,

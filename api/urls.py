@@ -6,9 +6,9 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, 
     PasswordChangeView, PasswordResetConfirmView
 
 urlpatterns = [
-    path('products/', views.products, name = 'products'),
+    path('products/', views.Products.as_view(), name = 'products'),
     path('products/<str:token>/',views.ProductRetrieve.as_view(),name = 'product_detail' ),
-    path('search/', views.search_product, name = 'search'),
+    path('search/', views.SearchProduct.as_view(), name = 'search'),
 
     path('csrf/', views.csrf, name = 'csrf'),
 
