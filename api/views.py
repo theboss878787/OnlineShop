@@ -1,10 +1,13 @@
 from rest_framework import parsers, renderers
 from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.compat import coreapi, coreschema
 from rest_framework.generics import ListAPIView
 from rest_framework.schemas import ManualSchema
 from rest_framework.schemas import coreapi as coreapi_schema
+
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
@@ -13,11 +16,14 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.views import APIView
+
+from Online_shop.serializers import PublicUserSerializer
 #Models :
 from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
 #Seializers :
-from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, ReviewSerializer, PublicCartSerializer
+from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, \
+    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
@@ -239,6 +245,7 @@ class ReviewCreate(generics.CreateAPIView):
 
 
 class ObtainAuthToken(APIView):
+
     throttle_classes = ()
     permission_classes = ()
     parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
@@ -281,10 +288,16 @@ class ObtainAuthToken(APIView):
         kwargs['context'] = self.get_serializer_context()
         return self.serializer_class(*args, **kwargs)
 
+    @swagger_auto_schema(
+        request_body=AuthTokenSerializer,
+        responses={200: TokenResponseSerializer},
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'user':{'username' : user.username, 'first_name': user.first_name, 'last_name' : user.last_name, 'email' :user.email}})
+
+        return Response(TokenResponseSerializer({'token': token, 'user' : user}).data)
+
 
