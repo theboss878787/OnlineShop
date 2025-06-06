@@ -101,7 +101,7 @@ class CartCreateSerializer(serializers.ModelSerializer):
             product = Product.objects.get(token=token)
         except Product.DoesNotExist:
             raise serializers.ValidationError({'product_token': 'Invalid token'})
-        cart = Cart.objects.filter(**validated_data, ordered = False).first()
+        cart = Cart.objects.filter(**validated_data, ordered = False, product = product).first()
 
         if cart:
             if cart.quantity >= product.in_stock:
