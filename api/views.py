@@ -23,7 +23,7 @@ from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
 #Seializers :
 from .serializers import ProductSerializer, CartCreateSerializer, CategorySerializer, OrderSerializer, UserSerializer, \
-    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer, CartListSerializer
+    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer, CartListSerializer, CartInputSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
@@ -137,6 +137,15 @@ class CartDecrease(APIView):
         TokenAuthentication
     ]
     permission_classes = [permissions.IsAuthenticated]
+    @swagger_auto_schema(
+        request_body=CartInputSerializer,
+        responses={
+            204: '',
+            400: "Send the product token",
+            404: "Product not found",
+            401: ""
+        }
+    )
 
     def delete(self,request):
         user = request.user
@@ -156,7 +165,7 @@ class CartDecrease(APIView):
             return Response({'detail': 'Done!'}, status=status.HTTP_204_NO_CONTENT)
         else:
             cart.delete()
-            return Response({'detail': 'Done!'}, status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 class ClearCart(APIView):
 
     authentication_classes = [
@@ -181,6 +190,16 @@ class UpdateQuantity(APIView):
         TokenAuthentication
     ]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        request_body=CartInputSerializer,
+        responses={
+            200: '',
+            400: "Send the product token",
+            404: "Product not found",
+            401: ""
+        }
+    )
 
     def patch(self,request):
         serializer = PublicCartSerializer

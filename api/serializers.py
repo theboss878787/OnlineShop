@@ -122,6 +122,8 @@ class CartCreateSerializer(serializers.ModelSerializer):
             'quantity',
 
         ]
+class CartInputSerializer(serializers.Serializer):
+    product_token = serializers.CharField()
 
 class CartListSerializer(serializers.ModelSerializer):
 
