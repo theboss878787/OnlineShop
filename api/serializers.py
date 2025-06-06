@@ -151,6 +151,16 @@ class OrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = validated_data.get('user')
         carts = Cart.objects.filter(user = user, ordered = False)
+
+        first_name = validated_data.pop('first_name')
+        if first_name :
+            user.first_name = first_name
+            user.save()
+        last_name = validated_data.pop('last_name')
+        if last_name :
+            user.last_name = last_name
+            user.save()
+
         if carts.first():
             for cart in carts:
                 product = cart.product
@@ -195,6 +205,15 @@ class OrderSerializer(serializers.ModelSerializer):
                 'date',
 
         ]
+class OrderInputSerializer(serializers.Serializer):
+    first_name =serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    city = serializers.CharField()
+    address = serializers.CharField()
+    number = serializers.IntegerField()
+    postal_code = serializers.CharField(required=False)
+
+
 
 class ReviewSerializer(serializers.ModelSerializer):
 

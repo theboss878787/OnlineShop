@@ -63,8 +63,8 @@
         <tr>
           <td>{{ item.product.name }}</td>
           <td>{{ item.quantity }}</td>
-          <td>{{ item.product.price|intcomma }}</td>
-          <td>{{ item.product.price|mul:item.quantity|intcomma }}</td>
+          <td>{{ item.product.sale_price|intcomma }}</td>
+          <td>{{ item.product.sale_price|mul:item.quantity|intcomma }}</td>
         </tr>
         {% endfor %}
         <tr class="total">

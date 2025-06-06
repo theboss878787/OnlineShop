@@ -22,7 +22,7 @@ from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
 #Seializers :
 from .serializers import ProductSerializer, CartCreateSerializer, CategorySerializer, OrderSerializer, UserSerializer, \
-    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer, CartListSerializer, CartInputSerializer
+    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer, CartListSerializer, CartInputSerializer,OrderInputSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
@@ -251,14 +251,25 @@ class Order(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
+        first_name = self.request.data.get('first_name')
+        last_name = self.request.data.get('last_name')
         user = self.request.user
-        serializer.save(user = user)
+        serializer.save(user = user, first_name= first_name, last_name= last_name)
 
     def get_queryset(self):
         qs = super().get_queryset()
         user = self.request.user
         qs = qs.filter(user = user)
         return qs
+    @swagger_auto_schema(
+        request_body=OrderInputSerializer,
+        responses= {
+            201: OrderSerializer
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request)
+
 
 class ReviewCreate(generics.CreateAPIView):
     queryset = ProductReview.objects.all()
