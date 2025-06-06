@@ -94,7 +94,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CartCreateSerializer(serializers.ModelSerializer):
 
     product_token = serializers.CharField(max_length=100, write_only=True)
-
+    product = ProductSerializer(read_only=True)
     def create(self, validated_data):
         token = validated_data.pop('product_token')
         try:
@@ -119,6 +119,7 @@ class CartCreateSerializer(serializers.ModelSerializer):
         model = Cart
         fields =[
             'product_token',
+            'product',
             'quantity',
 
         ]
@@ -175,9 +176,10 @@ class OrderSerializer(serializers.ModelSerializer):
             return order
         raise serializers.ValidationError({"Message" : "Cart is empty"})
 
+    @swagger_serializer_method(serializer_or_field=CartListSerializer(many=True))
     def get_cart(self,obj):
         carts = obj.cart.all()
-        return PublicCartSerializer(carts, many=True).data
+        return CartListSerializer(carts, many=True).data
 
     class Meta:
         model = Order

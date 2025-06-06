@@ -8,7 +8,6 @@ from rest_framework.schemas import coreapi as coreapi_schema
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 from django.middleware.csrf import get_token
@@ -125,6 +124,18 @@ class CartCreate(generics.CreateAPIView):
     ]
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(
+        request_body=CartInputSerializer,
+        responses={
+            200: CartListSerializer,
+            400: "Send the product token",
+            404: "Product not found",
+            401: ""
+        }
+    )
+    def post(self, request):
+        return super().post(request)
+
     def perform_create(self,serializer):
 
         user = self.request.user
@@ -140,14 +151,14 @@ class CartDecrease(APIView):
     @swagger_auto_schema(
         request_body=CartInputSerializer,
         responses={
-            204: '',
+            200: CartListSerializer,
             400: "Send the product token",
             404: "Product not found",
             401: ""
         }
     )
 
-    def delete(self,request):
+    def put(self,request):
         user = request.user
         product_token = request.data.get('product_token')
         if not product_token:
@@ -162,7 +173,7 @@ class CartDecrease(APIView):
         if cart.quantity >1 :
             cart.quantity -= 1
             cart.save()
-            return Response({'detail': 'Done!'}, status=status.HTTP_204_NO_CONTENT)
+            return Response(CartListSerializer(cart).data, status=status.HTTP_200_OK)
         else:
             cart.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -194,15 +205,15 @@ class UpdateQuantity(APIView):
     @swagger_auto_schema(
         request_body=CartInputSerializer,
         responses={
-            200: '',
+            200: CartListSerializer,
             400: "Send the product token",
             404: "Product not found",
             401: ""
         }
     )
 
-    def patch(self,request):
-        serializer = PublicCartSerializer
+    def put(self,request):
+        serializer = CartListSerializer
         user = request.user
 
         product_token = request.data.get('product_token')
