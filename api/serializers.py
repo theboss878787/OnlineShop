@@ -97,12 +97,12 @@ class CartSerializer(serializers.ModelSerializer):
     product_token = serializers.CharField(max_length=100, write_only=True)
 
     def create(self, validated_data):
-        cart = Cart.objects.filter(**validated_data, ordered = False).first()
         token = validated_data.pop('product_token')
         try:
             product = Product.objects.get(token=token)
         except Product.DoesNotExist:
             raise serializers.ValidationError({'product_token': 'Invalid token'})
+        cart = Cart.objects.filter(**validated_data, ordered = False).first()
 
         if cart:
             if cart.quantity >= product.in_stock:
@@ -113,7 +113,7 @@ class CartSerializer(serializers.ModelSerializer):
         if product.in_stock <= 0 :
             raise serializers.ValidationError({'Message ': f"{product.name} is out of stock"})
 
-        cart = Cart.objects.create(**validated_data)
+        cart = Cart.objects.create(**validated_data,product=product)
         return cart
 
     class Meta:

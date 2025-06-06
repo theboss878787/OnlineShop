@@ -18,7 +18,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
-    price = models.IntegerField()
+    price = models.BigIntegerField()
     in_stock = models.PositiveIntegerField()
     image = models.ImageField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
@@ -78,7 +78,7 @@ class Order(models.Model):
     address = models.TextField()
     number = models.IntegerField()
     city = models.TextField()
-    price = models.FloatField()
+    price = models.BigIntegerField()
     date = models.DateTimeField(default=datetime.now)
     token= models.CharField(blank= True,max_length=10,unique =True)
 
