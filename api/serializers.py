@@ -91,9 +91,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         ]
 
-class CartSerializer(serializers.ModelSerializer):
+class CartCreateSerializer(serializers.ModelSerializer):
 
-    product = PublicProductSerializer(read_only=True)
     product_token = serializers.CharField(max_length=100, write_only=True)
 
     def create(self, validated_data):
@@ -121,9 +120,18 @@ class CartSerializer(serializers.ModelSerializer):
         fields =[
             'product_token',
             'quantity',
-            'product'
+
         ]
 
+class CartListSerializer(serializers.ModelSerializer):
+
+    product = ProductSerializer(read_only=True)
+    class Meta:
+        model = Cart
+        fields = [
+            'product',
+            'quantity',
+        ]
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category

@@ -22,8 +22,8 @@ from Online_shop.serializers import PublicUserSerializer
 from .models import Product, Category, Cart, Order, ProductReview
 from django.contrib.auth.models import User
 #Seializers :
-from .serializers import ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer, UserSerializer, \
-    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer
+from .serializers import ProductSerializer, CartCreateSerializer, CategorySerializer, OrderSerializer, UserSerializer, \
+    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer, CartListSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
@@ -102,7 +102,7 @@ class CategoryProducts(generics.ListAPIView):
         return qs.filter(category = category)
 class CartList(generics.ListAPIView):
     queryset = Cart.objects.all()
-    serializer_class = CartSerializer
+    serializer_class = CartListSerializer
 
     authentication_classes = [
         SessionAuthentication,
@@ -117,7 +117,7 @@ class CartList(generics.ListAPIView):
 class CartCreate(generics.CreateAPIView):
 
     queryset = Cart.objects.all()
-    serializer_class = CartSerializer
+    serializer_class = CartCreateSerializer
 
     authentication_classes = [
         SessionAuthentication,
