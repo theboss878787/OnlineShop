@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import string ,random
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django_jalali.db import models as jmodels
+import jdatetime
 
 def code_generator(type = 'P' , length = 7):  # Default for products
         code = type + '-'+''.join(random.choices(string.digits, k = length))
@@ -79,7 +81,7 @@ class Order(models.Model):
     number = models.IntegerField()
     city = models.TextField()
     price = models.BigIntegerField()
-    date = models.DateTimeField(default=datetime.now)
+    date = jmodels.jDateTimeField(default=jdatetime.datetime.now)
     token= models.CharField(blank= True,max_length=10,unique =True)
 
     def save(self, *args, **kwargs):

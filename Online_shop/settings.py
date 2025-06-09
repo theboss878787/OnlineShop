@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework.authtoken',
 
-    'api'
+    'api',
+
+    'jdatetime',
+    'django_jalali',
 ]
 
 MIDDLEWARE = [
