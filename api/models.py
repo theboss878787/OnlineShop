@@ -90,4 +90,4 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Order of {self.user} is {self.status}. -- in : {self.date.ctime()}"
+        return f"Order of {self.user} is {self.status}. Date : {self.date.ctime()}"
