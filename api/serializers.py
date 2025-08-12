@@ -196,7 +196,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
                 'user',
                 'address',
-                'number',
+                'phone_number',
                 'city',
                 'price',
                 'status',
@@ -210,7 +210,7 @@ class OrderInputSerializer(serializers.Serializer):
     last_name = serializers.CharField(required=False)
     city = serializers.CharField()
     address = serializers.CharField()
-    number = serializers.IntegerField()
+    phone_number = serializers.CharField()
     postal_code = serializers.CharField(required=False)
 
 

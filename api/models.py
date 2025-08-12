@@ -12,7 +12,6 @@ def code_generator(type = 'P' , length = 7):  # Default for products
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=50, default="", null=True, blank=True)
     image = models.ImageField(default='images/no_image.jpg')
 
     def __str__(self):
@@ -35,7 +34,7 @@ class Product(models.Model):
         super().save(*args, **kwargs)
     @property
     def sale_price(self):
-        return  self.price - self.price * (self.discount/100)
+        return  int(self.price - self.price * (self.discount/100))
 
     def __str__(self):
         return '{} - {}'.format(self.name, self.category)
@@ -78,7 +77,7 @@ class Order(models.Model):
     postal_code = models.IntegerField(null=True, blank = True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.TextField()
-    number = models.IntegerField()
+    phone_number = models.CharField(max_length=11)
     city = models.TextField()
     price = models.BigIntegerField()
     date = jmodels.jDateTimeField(default=jdatetime.datetime.now)
@@ -91,3 +90,10 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order of {self.user} is {self.status}. Date : {self.date.ctime()}"
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=11, unique=True, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.user.username}`s Profile'
