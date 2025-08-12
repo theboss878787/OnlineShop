@@ -18,11 +18,12 @@ from rest_framework.views import APIView
 
 from Online_shop.serializers import PublicUserSerializer
 #Models :
-from .models import Product, Category, Cart, Order, ProductReview
+from .models import Product, Category, Cart, Order, ProductReview, Profile
 from django.contrib.auth.models import User
 #Seializers :
 from .serializers import ProductSerializer, CartCreateSerializer, CategorySerializer, OrderSerializer, UserSerializer, \
-    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer, CartListSerializer, CartInputSerializer,OrderInputSerializer
+    ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer, CartListSerializer, \
+    CartInputSerializer, OrderInputSerializer, ProfileSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
@@ -263,6 +264,7 @@ class Order(generics.ListCreateAPIView):
         return qs
     @swagger_auto_schema(
         request_body=OrderInputSerializer,
+        operation_description = 'For existing address don`t send city,address_text,postal_code just send address_id.',
         responses= {
             201: OrderSerializer
         }
@@ -284,6 +286,16 @@ class ReviewCreate(generics.CreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(user = user)
+
+class ProfileView(generics.ListAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    authentication_classes = [
+        SessionAuthentication,
+        TokenAuthentication
+    ]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class ObtainAuthToken(APIView):

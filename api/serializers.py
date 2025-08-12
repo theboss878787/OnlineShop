@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 
 #Models :
-from .models import Product, Cart, Category, Order, ProductReview
+from .models import Product, Cart, Category, Order, ProductReview, Profile, Address
 from django.contrib.auth.models import User
 #PublicSerilalizers :
 from Online_shop.serializers import PublicTokenSerializer,PublicCategorySerializer, PublicCartSerializer, PublicUserSerializer, PublicProductSerializer, PublicReviewSerializer
@@ -139,27 +139,63 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ["name"]
+class AddressSerializer(serializers.ModelSerializer):
+    user = PublicUserSerializer(read_only=True)
 
+    class Meta:
+        model = Address
+        fields = [
+            'user',
+            'address',
+            'city',
+        ]
 class OrderSerializer(serializers.ModelSerializer):
 
     cart = serializers.SerializerMethodField()
+    city = serializers.CharField(write_only=True, required=False)
+    address_text = serializers.CharField(write_only=True, required=False)
+    postal_code = serializers.CharField(write_only=True, required=False)
+    save_address = serializers.IntegerField(default=0)
+    address_id = serializers.IntegerField(required=False, write_only=True)
+    address = serializers.SerializerMethodField(read_only=True)
     date = serializers.DateTimeField(required=False)
     user = PublicUserSerializer(read_only = True)
     price = serializers.IntegerField(read_only=True)
     status = serializers.CharField(max_length=50,read_only=True)
 
+    def validate(self, attrs):
+        if not attrs.get('address_id') and not attrs.get('address_text') and not attrs.get('city') and not attrs.get('postal_code'):
+            raise serializers.ValidationError('send address_id or send address_text, city, postal_code')
+        return attrs
     def create(self, validated_data):
         user = validated_data.get('user')
         carts = Cart.objects.filter(user = user, ordered = False)
+        address_id = validated_data.pop('address_id', None)
+        save_address = validated_data.pop('save_address', 0)
+        if save_address == 1:
+            save_address = True
+        else:
+            save_address = False
+        if address_id :
+            address = Address.objects.get(id = address_id)
+        else:
+            address_text = validated_data.pop('address_text')
+            city = validated_data.pop('city')
+            postal_code = validated_data.pop('postal_code')
+            address = Address.objects.create(address = address_text, city = city, postal_code=postal_code, user=user, save_address = save_address)
+            address.save()
 
-        first_name = validated_data.pop('first_name')
+        first_name = validated_data.pop('first_name', None)
         if first_name :
-            user.first_name = first_name
-            user.save()
-        last_name = validated_data.pop('last_name')
+            if not user.first_name :
+                user.first_name = first_name
+                user.save()
+
+        last_name = validated_data.pop('last_name', None)
         if last_name :
-            user.last_name = last_name
-            user.save()
+            if not user.last_name :
+                user.last_name = last_name
+                user.save()
 
         if carts.first():
             for cart in carts:
@@ -167,7 +203,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 if cart.quantity > product.in_stock :
                     raise serializers.ValidationError({"Message": "Some products are out of stock"})
 
-            order = Order.objects.create(**validated_data,price = 0)
+            order = Order.objects.create(**validated_data, address = address, price = 0)
 
             for cart in carts:
                 product = cart.product
@@ -182,7 +218,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 cart.save()
                 order.save()
 
-                send_order_email(items = carts, price=order.price, to_email=user.email, token=order.token[2:])
+            send_order_email(items = carts, price=order.price, to_email=user.email, token=order.token[2:])
             return order
         raise serializers.ValidationError({"Message" : "Cart is empty"})
 
@@ -191,29 +227,37 @@ class OrderSerializer(serializers.ModelSerializer):
         carts = obj.cart.all()
         return CartListSerializer(carts, many=True).data
 
+    @swagger_serializer_method(serializer_or_field=AddressSerializer())
+    def get_address(self, obj):
+        address = obj.address
+        return AddressSerializer(address).data
+
     class Meta:
         model = Order
         fields = [
-                'user',
-                'address',
-                'phone_number',
-                'city',
-                'price',
-                'status',
-                'postal_code',
-                'cart',
-                'date',
+            'user',
+            'address',
+            'address_text',
+            'address_id',
+            'save_address',
+            'city',
+            'phone_number',
+            'price',
+            'status',
+            'postal_code',
+            'cart',
+            'date',
 
         ]
 class OrderInputSerializer(serializers.Serializer):
     first_name =serializers.CharField(required=False)
     last_name = serializers.CharField(required=False)
-    city = serializers.CharField()
-    address = serializers.CharField()
-    phone_number = serializers.CharField()
+    city = serializers.CharField(required = False)
     postal_code = serializers.CharField(required=False)
-
-
+    address_text = serializers.CharField(required = False)
+    address_id = serializers.IntegerField(required=False)
+    save_address = serializers.IntegerField(default=0)
+    phone_number = serializers.CharField()
 
 class ReviewSerializer(serializers.ModelSerializer):
 
@@ -234,6 +278,14 @@ class ReviewSerializer(serializers.ModelSerializer):
             'review',
             'star',
             'product_token'
+        ]
+class ProfileSerializer(serializers.ModelSerializer):
+    user = PublicUserSerializer(read_only=True)
+    class Meta:
+        model = Profile
+        fields = [
+            'user',
+            'phone_number',
         ]
 
 class AuthTokenSerializer(serializers.Serializer):

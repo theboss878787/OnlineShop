@@ -34,7 +34,7 @@ class Product(models.Model):
         super().save(*args, **kwargs)
     @property
     def sale_price(self):
-        return  int(self.price - self.price * (self.discount/100))
+        return int(self.price - self.price * (self.discount/100))
 
     def __str__(self):
         return '{} - {}'.format(self.name, self.category)
@@ -63,6 +63,12 @@ class Cart(models.Model):
     def __str__(self):
         return (f"{self.quantity} of {self.product.name} for {self.user.username} ")
 
+class Address(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    address = models.TextField()
+    city = models.CharField(max_length=20)
+    postal_code = models.CharField(max_length=12)
+    save_address = models.BooleanField(default=False)
 
 class Order(models.Model):
     status_choices = (
@@ -74,11 +80,9 @@ class Order(models.Model):
     )
     status = models.CharField(max_length=10, choices=status_choices, default='pending')
     cart = models.ManyToManyField(Cart)
-    postal_code = models.IntegerField(null=True, blank = True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    address = models.TextField()
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
     phone_number = models.CharField(max_length=11)
-    city = models.TextField()
     price = models.BigIntegerField()
     date = jmodels.jDateTimeField(default=jdatetime.datetime.now)
     token= models.CharField(blank= True,max_length=10,unique =True)
@@ -91,8 +95,10 @@ class Order(models.Model):
     def __str__(self):
         return f"Order of {self.user} is {self.status}. Date : {self.date.ctime()}"
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    addresses = models.ManyToManyField(Address)
     phone_number = models.CharField(max_length=11, unique=True, blank=True, null=True)
 
     def __str__(self):
