@@ -141,6 +141,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["name"]
 class AddressSerializer(serializers.ModelSerializer):
     user = PublicUserSerializer(read_only=True)
+    save_address =serializers.BooleanField(default=True, read_only=True)
 
     class Meta:
         model = Address
@@ -148,7 +149,10 @@ class AddressSerializer(serializers.ModelSerializer):
             'user',
             'address',
             'city',
+            'postal_code',
+            'save_address   '
         ]
+
 class OrderSerializer(serializers.ModelSerializer):
 
     cart = serializers.SerializerMethodField()
@@ -164,7 +168,7 @@ class OrderSerializer(serializers.ModelSerializer):
     status = serializers.CharField(max_length=50,read_only=True)
 
     def validate(self, attrs):
-        if not attrs.get('address_id') and not attrs.get('address_text') and not attrs.get('city') and not attrs.get('postal_code'):
+        if not attrs.get('address_id') and (not attrs.get('address_text') or not attrs.get('city') or not attrs.get('postal_code')):
             raise serializers.ValidationError('send address_id or send address_text, city, postal_code')
         return attrs
     def create(self, validated_data):

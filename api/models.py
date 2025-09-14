@@ -1,10 +1,12 @@
 from datetime import datetime
+
+from PIL.WalImageFile import quake2palette
 from django.db import models
 from django.contrib.auth.models import User
 import string ,random
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django_jalali.db import models as jmodels
-import jdatetime
+from django_resized import ResizedImageField
 
 def code_generator(type = 'P' , length = 7):  # Default for products
         code = type + '-'+''.join(random.choices(string.digits, k = length))
@@ -12,7 +14,7 @@ def code_generator(type = 'P' , length = 7):  # Default for products
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
-    image = models.ImageField(default='images/no_image.jpg')
+    image = ResizedImageField(size = [600,600],quality = 85 ,default='images/no_image.jpg')
 
     def __str__(self):
         return self.name
@@ -21,7 +23,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.BigIntegerField()
     in_stock = models.PositiveIntegerField()
-    image = models.ImageField(null=True, blank=True)
+    image = ResizedImageField(size = [600,600],quality = 85,null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     extra_details = models.TextField(null=True, blank=True, default=None)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
@@ -84,7 +86,7 @@ class Order(models.Model):
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
     phone_number = models.CharField(max_length=11)
     price = models.BigIntegerField()
-    date = jmodels.jDateTimeField(default=jdatetime.datetime.now)
+    date = jmodels.jDateTimeField(default=datetime.now)
     token= models.CharField(blank= True,max_length=10,unique =True)
 
     def save(self, *args, **kwargs):

@@ -30,9 +30,11 @@ urlpatterns = [
 
     path('profile/', views.ProfileView.as_view(), name = 'profile'),
 
+    path('profile/addresses/', views.AddressList.as_view(), name = 'address_list'),
+
     path('login/', views.LoginView.as_view(), name = 'login'),
     path('logout/', views.LogoutView.as_view(), name= 'logout'),
-    path('auth_me/', views.AtuhMe.as_view(),name = 'auth'),
+    path('auth_me/', views.AuthMe.as_view(),name = 'auth'),
     path('auth/password_reset/', PasswordResetView.as_view(), name = "password_reset"),
     path('auth/password_reset_done/', PasswordResetDoneView.as_view(), name = 'password_reset_done'),
     path('auth/password_reset_confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view() ,name = 'password_reset_confirm'),

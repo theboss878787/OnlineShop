@@ -18,12 +18,12 @@ from rest_framework.views import APIView
 
 from Online_shop.serializers import PublicUserSerializer
 #Models :
-from .models import Product, Category, Cart, Order, ProductReview, Profile
+from .models import Product, Category, Cart, Order, ProductReview, Profile, Address
 from django.contrib.auth.models import User
 #Seializers :
 from .serializers import ProductSerializer, CartCreateSerializer, CategorySerializer, OrderSerializer, UserSerializer, \
     ReviewSerializer, PublicCartSerializer, AuthTokenSerializer, TokenResponseSerializer, CartListSerializer, \
-    CartInputSerializer, OrderInputSerializer, ProfileSerializer
+    CartInputSerializer, OrderInputSerializer, ProfileSerializer, AddressSerializer
 
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
@@ -48,7 +48,7 @@ class SearchProduct(generics.ListAPIView):
         qs = super().get_queryset()
         qs = qs.filter(Q(name__icontains = q)| Q (description__icontains = q))
         return qs
-class AtuhMe(APIView):
+class AuthMe(APIView):
     authentication_classes = [
         SessionAuthentication,
         TokenAuthentication
@@ -271,6 +271,19 @@ class Order(generics.ListCreateAPIView):
     )
     def post(self, request, *args, **kwargs):
         return super().post(request)
+
+class AddressList(generics.ListCreateAPIView):
+    serializer_class = AddressSerializer
+    queryset = Address.objects.all()
+
+    authentication_classes = [
+        SessionAuthentication,
+        TokenAuthentication
+    ]
+    permission_classes = [permissions.IsAuthenticated]
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(user = user, save_address=True)
 
 
 class ReviewCreate(generics.CreateAPIView):
