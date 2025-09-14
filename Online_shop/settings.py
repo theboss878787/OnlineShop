@@ -47,11 +47,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'cloudinary_storage',
+    'cloudinary',
+    
     'rest_framework',
     'drf_yasg',
     'rest_framework.authtoken',
-
+    "django_extensions",
+    
     'api',
 
     'jdatetime',
