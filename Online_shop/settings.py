@@ -29,7 +29,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if ENVIRONMENT == 'Production':
+if ENVIRONMENT == 'production':
     DEBUG = False
 else:
     DEBUG = True
@@ -99,7 +99,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-LOCAL_POSTGRES = True
+LOCAL_POSTGRES = False
 if ENVIRONMENT == 'production' or LOCAL_POSTGRES:
     DATABASE_URL = str(os.getenv('DATABASE_URL'))
     DATABASES['default'] = dj_database_url.parse(DATABASE_URL)
